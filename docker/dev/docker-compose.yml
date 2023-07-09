@@ -1,0 +1,49 @@
+version: '3'
+services:
+  mytheresa:
+    build: ./app
+    container_name: mytheresa
+    working_dir: /var/www/html/www.mytheresa.com
+    volumes:
+      - ../../:/var/www/html/www.mytheresa.com
+      - ./web/apache/dev/dev.conf:/etc/apache2/sites-enabled/www.mytheresa.com.conf
+      - ./app/config/config.ini:/usr/local/etc/php/conf.d/config.ini
+    external_links:
+      - mysql-8.0
+      - redis-3.0
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - services
+
+  redis-3.0:
+    image:  redis:3.0
+    container_name: docker-redis-3.0
+    ports:
+      - 6379:6379
+    networks:
+      - services
+
+  mysql-8.0:
+    build: ./db
+    command: --authentication_policy=mysql_native_password
+    cap_add:
+      - SYS_NICE
+    container_name: docker-mysql-8.0
+    volumes:
+      - docker-mysql:/var/lib/mysql-8.0
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_ROOT_HOST=%"
+    ports:
+      - 3306:3306
+    networks:
+      - services
+
+networks:
+  services:
+    driver: bridge
+
+volumes:
+  docker-mysql:

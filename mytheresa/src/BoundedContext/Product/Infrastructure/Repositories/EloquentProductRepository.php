@@ -47,7 +47,7 @@ class EloquentProductRepository implements ProductRepositoryContract
 
         if ($category !== null) {
             $query->leftJoin('categories', 'products.category_id', '=', 'categories.category_id')
-                ->where('category.name', '=', $category);
+                ->where('categories.name', '=', $category);
         }
 
         if ($priceLessThan !== null) {

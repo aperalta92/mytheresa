@@ -13,12 +13,13 @@ class FindProductsByCriteriaController extends Controller
     ) {
     }
 
-    public function execute(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         return new JsonResponse(
             $this->findProductsByCriteriaController->__invoke(
                 $request->input('category'),
                 $request->has('priceLessThan') ? (int) $request->input('priceLessThan') : null,
+                $request->has('page') ? (int) $request->input('page') : 1,
             )
         );
     }

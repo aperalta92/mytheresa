@@ -4,11 +4,13 @@ namespace Mytheresa\Product\Infrastructure\Repositories;
 
 use App\Models\Product as EloquentModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\Paginator;
 use Mytheresa\Product\Domain\Contracts\ProductRepositoryContract;
 use Mytheresa\Product\Domain\Entity\Product;
 
-final class EloquentProductRepository implements ProductRepositoryContract
+class EloquentProductRepository implements ProductRepositoryContract
 {
+    const MAX_PER_PAGE = 5;
     private EloquentModel $eloquentProductModel;
 
     public function __construct() {
@@ -31,34 +33,43 @@ final class EloquentProductRepository implements ProductRepositoryContract
         return Product::create(
             $eloquentModel->sku(),
             $eloquentModel->name(),
-            $eloquentModel->category(),
             $eloquentModel->price(),
-            $eloquentModel->id()
+            $eloquentModel->categoryId(),
+            $eloquentModel->discountId(),
+            $eloquentModel->id(),
+            null,
         );
     }
 
-    public function findByCriteria(?string $category, ?int $priceLessThan): array
+    public function findByCriteria(?string $category, ?int $priceLessThan, int $page): array
     {
         $query = $this->query();
 
         if ($category !== null) {
-            $query->where('category', '=', $category);
+            $query->leftJoin('categories', 'products.category_id', '=', 'categories.category_id')
+                ->where('category.name', '=', $category);
         }
 
         if ($priceLessThan !== null) {
-            $query->where('price', '<', $priceLessThan);
+            $query->where('price', '<=', $priceLessThan);
         }
 
-        $eloquentProducts = $query->get();
+        $eloquentProducts = new Paginator($query->get(), self::MAX_PER_PAGE, $page);
 
-        $products = [];
+        $products = [
+            'items' => [],
+            'currPage' => $eloquentProducts->currentPage(),
+        ];
+
         foreach ($eloquentProducts as $item) {
-            $products[] = Product::create(
+            $products['items'][] = Product::create(
                 $item->sku(),
                 $item->name(),
-                $item->category(),
                 $item->price(),
-                $item->id()
+                $item->categoryId(),
+                $item->discountId(),
+                $item->id(),
+                null,
             );
         }
 
@@ -74,7 +85,8 @@ final class EloquentProductRepository implements ProductRepositoryContract
         $eloquentProduct
             ->setSku($product->sku()->value())
             ->setName($product->name()->value())
-            ->setCategory($product->category()->value())
+            ->setCategoryId($product->categoryId()->value())
+            ->setDiscountId($product->discountId()->value())
             ->setPrice($product->price()->value());
 
         $eloquentProduct->save();
@@ -82,9 +94,11 @@ final class EloquentProductRepository implements ProductRepositoryContract
         return Product::create(
             $eloquentProduct->sku(),
             $eloquentProduct->name(),
-            $eloquentProduct->category(),
             $eloquentProduct->price(),
+            $eloquentProduct->categoryId(),
+            $eloquentProduct->discountId(),
             $eloquentProduct->id(),
+            null,
         );
     }
 }

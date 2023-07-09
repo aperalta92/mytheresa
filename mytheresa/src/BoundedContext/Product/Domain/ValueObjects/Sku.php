@@ -2,7 +2,7 @@
 
 namespace Mytheresa\Product\Domain\ValueObjects;
 
-final class Sku {
+class Sku {
 
     public function __construct(
         private string $value

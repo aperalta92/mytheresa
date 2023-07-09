@@ -2,25 +2,27 @@
 
 namespace Mytheresa\Product\Application\UseCases;
 
+use Mytheresa\Category\Domain\Services\GetCategoryByIdService;
 use Mytheresa\Product\Application\Contracts\FindProductsByCriteriaUseCaseRequestContract;
-use Mytheresa\Product\Domain\Contracts\ProductRepositoryContract;
-use Mytheresa\Product\Domain\Converters\ProductConverter;
 use Mytheresa\Product\Domain\Converters\ProductListConverters;
+use Mytheresa\Product\Domain\Services\GetProductsByCriteriaService;
 
-final class FindProductsByCriteriaUseCase {
+class FindProductsByCriteriaUseCase {
     public function __construct(
-        private ProductRepositoryContract $repository,
+        private GetProductsByCriteriaService $getProductsByCriteriaService,
+        private GetCategoryByIdService $getCategoryByIdService,
+        private ProductListConverters $productListConverters,
     ) {
     }
 
     public function execute(FindProductsByCriteriaUseCaseRequestContract $request): array
     {
-        $productListConverter = new ProductListConverters(new ProductConverter());
-        return $productListConverter->execute(
-            $this->repository->findByCriteria(
-                $request->category(),
-                $request->priceLessThan() * 100,
-            )
+        $items = $this->getProductsByCriteriaService->execute(
+            $request->category(),
+            $request->priceLessThan(),
+            $request->page(),
         );
+
+        return $items;
     }
 }

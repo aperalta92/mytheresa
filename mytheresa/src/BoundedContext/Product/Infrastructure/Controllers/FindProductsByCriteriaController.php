@@ -3,28 +3,29 @@
 namespace Mytheresa\Product\Infrastructure\Controllers;
 
 use Mytheresa\Product\Application\UseCases\FindProductsByCriteriaUseCase;
-use Mytheresa\Product\Infrastructure\Repositories\EloquentProductRepository;
 use Mytheresa\Product\Infrastructure\Request\FindProductsByCriteriaRequest;
+use Mytheresa\Product\Infrastructure\Responses\FindProductsByCriteriaResponseResource;
 
-final class FindProductsByCriteriaController
+class FindProductsByCriteriaController
 {
     public function __construct(
-        private EloquentProductRepository $repository,
+        private FindProductsByCriteriaUseCase $useCase,
     ) {
     }
 
     public function __invoke(
         ?string $category,
-        ?int $priceLessThan
+        ?int $priceLessThan,
+        ?int $page,
     ) : ?array {
         $request = new FindProductsByCriteriaRequest(
             $category,
             $priceLessThan,
+            $page,
         );
+        $products = $this->useCase->execute($request);
 
-        $useCase = new FindProductsByCriteriaUseCase($this->repository);
-        $products = $useCase->execute($request);
-
-        return $products;
+        $response = new FindProductsByCriteriaResponseResource($products['items'], $products['currPage'], 200);
+        return $response();
     }
 }

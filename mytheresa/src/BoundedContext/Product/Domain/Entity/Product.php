@@ -3,19 +3,23 @@
 namespace Mytheresa\Product\Domain\Entity;
 
 use Mytheresa\Product\Domain\ValueObjects\Category;
+use Mytheresa\Product\Domain\ValueObjects\CategoryId;
+use Mytheresa\Product\Domain\ValueObjects\DiscountId;
 use Mytheresa\Product\Domain\ValueObjects\Id;
 use Mytheresa\Product\Domain\ValueObjects\Name;
 use Mytheresa\Product\Domain\ValueObjects\Price;
 use Mytheresa\Product\Domain\ValueObjects\Sku;
 
-final class Product {
+class Product {
 
     public function __construct(
         private Sku $sku,
         private Name $name,
-        private Category $category,
         private Price $price,
+        private CategoryId $categoryId,
+        private ?DiscountId $discountId = null,
         private ?Id $id = null,
+        private ?Category $category = null,
     ) {
     }
 
@@ -24,35 +28,31 @@ final class Product {
         return $this->sku;
     }
 
-    public function setSku(Sku $sku): self
-    {
-        $this->sku = $sku;
-
-        return $this;
-    }
-
     public function name(): Name
     {
         return $this->name;
     }
 
-    public function setName(Name $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function category(): Category
+    public function category(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategory(Category $category): self
+    public function setCategory(?string $category): ?Category
     {
-        $this->category = $category;
+        $this->category = new Category($category);
 
-        return $this;
+        return $this->category();
+    }
+
+    public function categoryId(): CategoryId
+    {
+        return $this->categoryId;
+    }
+
+    public function discountId(): DiscountId
+    {
+        return $this->discountId;
     }
 
     public function price(): Price
@@ -60,38 +60,28 @@ final class Product {
         return $this->price;
     }
 
-    public function setPrice(Price $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
     public function id(): ?Id
     {
         return $this->id;
     }
 
-    public function setId(?Id $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     public static function create(
         string $sku,
         string $name,
-        string $category,
         int $price,
+        int $categoryId,
+        ?int $discountId,
         ?int $id,
+        ?string $category,
     ): Product {
         return new self(
             new Sku($sku),
             new Name($name),
-            new Category($category),
             new Price($price),
+            new CategoryId($categoryId),
+            new DiscountId($discountId),
             new Id($id),
+            new Category($category),
         );
     }
 
@@ -104,8 +94,10 @@ final class Product {
             'id' => $this->id()->value(),
             'sku' => $this->sku()->value(),
             'name' => $this->name()->value(),
-            'category' => $this->category()->value(),
             'price' => $this->price()->value(),
+            'categoryId' => $this->categoryId()->value(),
+            'discountId' => $this->discountId()->value(),
+            'category' => $this->category()->value(),
         ];
     }
 }

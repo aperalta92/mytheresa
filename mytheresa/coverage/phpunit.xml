@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">../tests/Unit/Src/BoundedContext/Product</directory>
+    </testsuite>
+  </testsuites>
+  <coverage>
+    <report>
+      <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="true"/>
+      <html outputDirectory="../storage/coverage/Product/src/coverage-html"/>
+    </report>
+  </coverage>
+  <source>
+    <include>
+      <directory suffix=".php">../src/BoundedContext/Product/</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">../src/BoundedContext/Product///Infrastructure</directory>
+    </exclude>
+  </source>
+</phpunit>

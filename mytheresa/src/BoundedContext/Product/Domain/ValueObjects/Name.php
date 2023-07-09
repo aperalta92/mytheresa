@@ -2,7 +2,7 @@
 
 namespace Mytheresa\Product\Domain\ValueObjects;
 
-final class Name {
+class Name {
 
     public function __construct(
         private string $value

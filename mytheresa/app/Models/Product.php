@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,6 +19,11 @@ class Product extends Model
     protected $table = 'products';
 
     /**
+     * @var string
+     */
+   protected $id = 'product_id';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -29,6 +35,13 @@ class Product extends Model
         'price',
     ];
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
+
     public function id(): int
     {
         return $this->getAttributeValue('product_id');
@@ -36,7 +49,7 @@ class Product extends Model
 
     public function setId(int $value): self
     {
-        return $this->setAttribute('id', $value);
+        return $this->setAttribute('product_id', $value);
     }
 
     public function sku(): string
@@ -59,14 +72,23 @@ class Product extends Model
         return $this->setAttribute('name', $value);
     }
 
-    public function category(): string
+    public function categoryId(): int
     {
-        return $this->getAttributeValue('category');
+        return $this->getAttributeValue('category_id');
     }
 
-    public function setCategory(string $value): self
+    public function setCategoryId(int $value): self
     {
-        return $this->setAttribute('category', $value);
+        return $this->setAttribute('category_id', $value);
+    }
+    public function discountId(): ?int
+    {
+        return $this->getAttributeValue('discount_id');
+    }
+
+    public function setDiscountId(?int $value): self
+    {
+        return $this->setAttribute('discount_id', $value);
     }
 
     public function price(): string
@@ -77,5 +99,23 @@ class Product extends Model
     public function setPrice(string $value): self
     {
         return $this->setAttribute('price', $value);
+    }
+
+    public function category(): HasOne {
+        return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+
+    public function categoryObj(): Category
+    {
+        return $this->getRelationValue('category');
+    }
+
+    public function discount(): HasOne {
+        return $this->hasOne(Discount::class, 'id', 'discount_id');
+    }
+
+    public function discountObj(): ?Discount
+    {
+        return $this->getRelationValue('discount');
     }
 }

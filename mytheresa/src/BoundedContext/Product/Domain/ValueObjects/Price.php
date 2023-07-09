@@ -2,7 +2,8 @@
 
 namespace Mytheresa\Product\Domain\ValueObjects;
 
-final class Price {
+class Price {
+    const CURRENCY = 'EUR';
 
     public function __construct(
         private int $value

@@ -4,12 +4,18 @@ namespace Mytheresa\Product\Infrastructure\Request;
 
 use Mytheresa\Product\Application\Contracts\FindProductsByCriteriaUseCaseRequestContract;
 
-final class FindProductsByCriteriaRequest implements FindProductsByCriteriaUseCaseRequestContract
+class FindProductsByCriteriaRequest implements FindProductsByCriteriaUseCaseRequestContract
 {
     public function __construct(
         private ?string $category,
         private ?int $priceLessThan,
+        private int $page,
     ) {
+    }
+
+    public function page(): int
+    {
+        return $this->page;
     }
 
     public function category(): ?string
@@ -19,6 +25,10 @@ final class FindProductsByCriteriaRequest implements FindProductsByCriteriaUseCa
 
     public function priceLessThan(): ?int
     {
-        return $this->priceLessThan;
+        if ($this->priceLessThan === null) {
+            return null;
+        }
+
+        return $this->priceLessThan * 100;
     }
 }

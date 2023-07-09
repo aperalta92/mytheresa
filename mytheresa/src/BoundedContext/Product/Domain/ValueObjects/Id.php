@@ -2,7 +2,7 @@
 
 namespace Mytheresa\Product\Domain\ValueObjects;
 
-final class Id {
+class Id {
 
     public function __construct(
         private ?int $value

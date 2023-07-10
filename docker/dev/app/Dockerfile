@@ -18,7 +18,3 @@ RUN apt-get update && apt-get install -y --fix-missing libmcrypt-dev locales loc
    && docker-php-ext-install zip
 
 RUN a2enmod rewrite
-
-COPY ./mytheresa.sh /mytheresa.sh
-RUN chmod +x /mytheresa.sh
-#ENTRYPOINT ["/mytheresa.sh"]

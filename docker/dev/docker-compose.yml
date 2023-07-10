@@ -3,7 +3,7 @@ services:
   mytheresa:
     build: ./app
     container_name: mytheresa
-    working_dir: /var/www/html/www.mytheresa.com
+    working_dir: /var/www/html/www.mytheresa.com/mytheresa
     volumes:
       - ../../:/var/www/html/www.mytheresa.com
       - ./web/apache/dev/dev.conf:/etc/apache2/sites-enabled/www.mytheresa.com.conf
@@ -33,6 +33,7 @@ services:
     container_name: docker-mysql-8.0
     volumes:
       - docker-mysql:/var/lib/mysql-8.0
+      - ./db/db.sh:/docker-entrypoint-initdb.d/10-create-mytheresa-database.sh
     environment:
       - "MYSQL_ROOT_PASSWORD=root"
       - "MYSQL_ROOT_HOST=%"

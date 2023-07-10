@@ -22,15 +22,15 @@ class GetProductPriceService
     {
         $discounts = [];
 
-        if (!is_null($product->categoryId()->value())) {
+        if (!$product->categoryId()->value() !== null) {
             $category = $this->getCategoryByIdService->execute($product->categoryId()->value());
 
-            if (!is_null($category->discountId()->value())) {
+            if ($category->discountId()->value() !== null) {
                 $discounts[] = $this->getDiscountByIdService->execute($category->discountId()->value())->percentage()->value();
             }
         }
 
-        if (!is_null($product->discountId()->value())) {
+        if ($product->discountId()->value() !== null) {
             $discounts[] = $this->getDiscountByIdService->execute($product->discountId()->value())->percentage()->value();
         }
 
